@@ -1,0 +1,38 @@
+ #config.yaml
+
+input_file:
+    tsv: "resources/raw/metadata.tsv"
+    fasta: "resources/raw/sequence.fasta"
+
+output_dirs:
+    - "results"
+    - "results/tree"
+    - "results/augur"
+
+files:
+    dataset_files: "resources/zikaV"
+    reference: "resources/reference.gb"
+    clades: "resources/clades.tsv"
+    auspice_config: "resources/auspice_config.json"
+    colors_ordering: "resources/color_ordering.tsv"
+    color_schemes: "resources/color_schemes.tsv"
+
+resources:
+  default:
+    mem_mb: 60000
+    threads: 20
+  minimal:
+    mem_mb: 10000
+    threads: 1
+  align:
+    mem_mb: 100000
+    threads: 60
+
+filter:
+    group_by: "country month"
+    sequences_per_group: "3"
+    min_length: 9714
+
+strain_id_field: "accession"
+
+genes: ['ancC', 'C', 'prM', 'pr', 'M', 'E', 'NS1', 'NS2A', 'NS2B', 'NS3', 'NS4A', '2K', 'NS4B', 'NS5']
