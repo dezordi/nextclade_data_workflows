@@ -38,10 +38,10 @@ FEATURES             Location/Qualifiers
      CDS             44..6796
                      /ID="cds-NP_982304.1"
                      /Dbxref="GenBank:NP_982304.1,GeneID:2943207"
-                     /Name="RNA_polymerase"
+                     /Name="L"
                      /gbkey="CDS"
-                     /locus_tag="RNA_polymerase"
-                     /product="RNA_plolymerase"
+                     /locus_tag="L"
+                     /product="L"
                      /protein_id="NP_982304.1"
 ORIGIN
         1 agtagtgtgc tcctattccg aaacaaacaa aaacaatctc aaaatgtcac aactgttgct

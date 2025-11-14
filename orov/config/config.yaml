@@ -15,12 +15,12 @@ dataset_config:
     dataset_files: "resources/L/tefe"
     min_length: 5110
     max_length: 6814
-    gene: "RNA_polymerase"
+    gene: "L"
   L/refseq:
     dataset_files: "resources/L/refseq"
     min_length: 5134
     max_length: 6846
-    gene: "RNA_polymerase"
+    gene: "L"
 
 resources:
   default:

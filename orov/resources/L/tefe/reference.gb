@@ -42,11 +42,11 @@ FEATURES             Location/Qualifiers
      CDS             36..6794
                      /ID="cds-WVH48487.1"
                      /Dbxref="NCBI_GP:WVH48487.1"
-                     /Name="RNA_polymerase"
+                     /Name="L"
                      /gbkey="CDS"
-                     /product="RNA_polymerase"
+                     /product="L"
                      /protein_id="WVH48487.1"
-                     /locus_tag="RNA_polymerase"
+                     /locus_tag="L"
 ORIGIN
         1 actcctattt cgaaacaaac aaaaacaatc tcaaaatgtc gcaactgtta ctcaaccaat
        61 atcgaaatag gatattgcac tgccgtgaac ctgaaatagc aaaggatata tggcgtgatc
