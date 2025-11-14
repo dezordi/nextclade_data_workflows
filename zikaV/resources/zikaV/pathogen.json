@@ -40,26 +40,23 @@
     },
     "missingData": {
       "enabled": true,
-      "missingDataThreshold": 1000,
-      "scoreBias": 500
+      "missingDataThreshold": 1625,
+      "scoreBias": 536
     },
     "mixedSites": {
       "enabled": false,
-      "mixedSitesThreshold": 8
+      "mixedSitesThreshold": 11
     },
     "privateMutations": {
-      "cutoff": 168,
+      "cutoff": 25,
       "enabled": true,
-      "typical": 56,
+      "typical": 5,
       "weightLabeledSubstitutions": 2,
       "weightReversionSubstitutions": 1,
       "weightUnlabeledSubstitutions": 1
     },
     "snpClusters": {
-      "clusterCutOff": 5,
-      "enabled": false,
-      "scoreWeight": 50,
-      "windowSize": 100
+      "enabled": false
     },
     "stopCodons": {
       "enabled": true

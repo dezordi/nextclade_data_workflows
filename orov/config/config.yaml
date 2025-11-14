@@ -1,0 +1,40 @@
+input_file:
+    tsv: "resources/raw/metadata.tsv"
+    fasta: "resources/raw/sequences.fasta"
+
+output_dirs:
+    - "results"
+    - "results/{build_name}/tree"
+    - "results/{build_name}/augur"
+    - "results/{build_name}/filter"
+    - "results/{build_name}/align"
+    - "results/{build_name}/refine"
+
+dataset_config:
+  orov/L/tefe:
+    dataset_files: "resources/L/tefe"
+    min_length: 5110
+    max_length: 6814
+    gene: "RNA_polymerase"
+  orov/L/refseq:
+    dataset_files: "resources/L/refseq"
+    min_length: 5134
+    max_length: 6846
+    gene: "RNA_polymerase"
+
+resources:
+  default:
+    mem_mb: 60000
+    threads: 20
+  minimal:
+    mem_mb: 10000
+    threads: 1
+  align:
+    mem_mb: 100000
+    threads: 60
+
+filter:
+    group_by: "country month"
+    sequences_per_group: "10"
+
+strain_id_field: "accession"

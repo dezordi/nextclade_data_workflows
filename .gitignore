@@ -1,6 +1,4 @@
 # test result files
-zikaV/results
-zikaV/.snakemake
 zikaV_test/.snakemake
 zikaV_test/data
 zikaV_test/dataset_test
@@ -11,6 +9,9 @@ zikaV_test/zika_dataset_test
 zikaV_test/CHANGELOG.md
 zikaV_test/zika_dataset_test.zip
 
+# results and snakemake
+*/.snakemake
+*/results
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[codz]

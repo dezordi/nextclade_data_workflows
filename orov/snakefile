@@ -1,0 +1,236 @@
+# config_file
+configfile: "config/config.yaml"
+
+# configurar ambiente
+conda: "workflow_env.yaml"
+
+build_names = list(config["dataset_config"].keys())
+dataset_files = [
+    "pathogen.json",
+    "sequences.fasta",
+    "genome_annotation.gff3",
+    "README.md",
+    "CHANGELOG.md",
+    "tree.json",
+    "reference.fasta"
+]
+
+rule all:
+    input:
+        datasets=expand(
+            "datasets/{dataset}/{file}", dataset=build_names, file=dataset_files
+        ),
+
+rule make_dirs:
+    output:
+        dirs = directory(expand("results/{build_name}/{dir}", 
+                              build_name=build_names, 
+                              dir=["filter", "align", "tree", "refine"]))
+    shell:
+        """
+        mkdir -p {output.dirs}
+        """
+
+rule filter:
+    input:
+        sequences = config["input_file"]["fasta"],
+        metadata = config["input_file"]["tsv"]
+    output:
+        sequences = "results/{build_name}/filter/pre-filtered.fasta",
+        metadata = "results/{build_name}/filter/pre-filtered.tsv"
+    params:
+        group_by = config["filter"]["group_by"],
+        sequences_per_group = config["filter"]["sequences_per_group"],
+        min_length = lambda w: config["dataset_config"][w.build_name]["min_length"],
+        max_length = lambda w: config["dataset_config"][w.build_name]["max_length"],
+    resources:
+        threads = config["resources"]["default"]["threads"],
+        mem_mb = config["resources"]["default"]["mem_mb"]
+    shell:
+        """
+        augur filter \
+            --sequences {input.sequences} \
+            --metadata {input.metadata} \
+            --output-sequences {output.sequences} \
+            --output-metadata {output.metadata} \
+            --group-by {params.group_by} \
+            --min-length {params.min_length} \
+            --max-length {params.max_length} \
+            --sequences-per-group {params.sequences_per_group} 
+        """
+
+rule align:
+    input:
+        sequences = "results/{build_name}/filter/pre-filtered.fasta"
+    output:
+        sequences = "results/{build_name}/align/aligned.fasta",
+        translations = "results/{build_name}/align/translations/touch.txt"
+    params:
+        dataset = lambda w: config["dataset_config"][w.build_name]["dataset_files"],
+        translations = "results/{build_name}/align/translations"
+    resources:
+        threads = config["resources"]["align"]["threads"],
+        mem_mb = config["resources"]["align"]["mem_mb"]
+    shell:
+        """
+        mkdir -p {params.translations}
+        nextclade3 run \
+           --jobs {resources.threads} \
+           --input-ref {params.dataset}/reference.fasta \
+           --input-pathogen-json {params.dataset}/pathogen.json \
+           --input-annotation {params.dataset}/genome_annotation.gff3 \
+           --output-fasta {output.sequences} \
+           --output-translations {params.translations}/{{cds}}.fasta \
+           --silent \
+           {input.sequences} && touch {output.translations}
+        """
+
+rule pre_tree:
+    input:
+        "results/{build_name}/align/aligned.fasta"
+    output:
+        "results/{build_name}/tree/aligned.fasta"
+    resources:
+        threads = config["resources"]["minimal"]["threads"],
+        mem_mb = config["resources"]["minimal"]["mem_mb"]
+    shell:
+        """
+        cp {input} {output}
+        """
+
+rule tree:
+    """Building tree"""
+    input:
+        alignment = "results/{build_name}/tree/aligned.fasta"
+    output:
+        tree = "results/{build_name}/tree/tree_raw.nwk"
+    resources:
+        threads = config["resources"]["align"]["threads"],
+        mem_mb = config["resources"]["align"]["mem_mb"]
+    shell:
+        """
+        augur tree \
+            --alignment {input.alignment} \
+            --output {output.tree}
+        """
+
+rule refine:
+    """
+    Refining tree
+    """
+    input:
+        tree = "results/{build_name}/tree/tree_raw.nwk",
+        alignment = "results/{build_name}/tree/aligned.fasta",
+        metadata = "results/{build_name}/filter/pre-filtered.tsv"
+    output:
+        tree = "results/{build_name}/refine/tree.nwk",
+        node_data = "results/{build_name}/refine/branch_lengths.json"
+    resources:
+        threads = config["resources"]["minimal"]["threads"],
+        mem_mb = config["resources"]["minimal"]["mem_mb"]
+    shell:
+        """
+        augur refine \
+            --tree {input.tree} \
+            --alignment {input.alignment} \
+            --metadata {input.metadata} \
+            --output-tree {output.tree} \
+            --output-node-data {output.node_data} \
+            --root mid_point
+        """
+
+rule ancestral:
+    message:
+        """
+        Reconstructing ancestral sequences and mutations
+          - inferring ambiguous mutations
+        """
+    input:
+        tree = "results/{build_name}/refine/tree.nwk",
+        alignment = "results/{build_name}/tree/aligned.fasta",
+        annotation = lambda w: config["dataset_config"][w.build_name]["dataset_files"] + '/genome_annotation.gff3',
+        reference = lambda w: config["dataset_config"][w.build_name]["dataset_files"] + '/reference.fasta'
+    output:
+        node_data = "results/{build_name}/refine/muts.json",
+    params:
+        inference = "joint",
+        translations = lambda w: "results/{0}/align/translations/{1}.fasta".format(
+            w.build_name, 
+            config["dataset_config"][w.build_name]["gene"]
+        ),
+        gene = lambda w: config["dataset_config"][w.build_name]["gene"]
+    resources:
+        threads = config["resources"]["default"]["threads"],
+        mem_mb = config["resources"]["default"]["mem_mb"]
+    shell:
+        """
+        augur ancestral \
+            --tree {input.tree} \
+            --alignment {input.alignment} \
+            --inference {params.inference} \
+            --infer-ambiguous \
+            --genes {params.gene} \
+            --annotation {input.annotation} \
+            --translations {params.translations} \
+            --root-sequence {input.reference} \
+            --output-node-data {output.node_data}
+        """
+
+rule export:
+    """Exporting data files for auspice"""
+    input:
+        tree = "results/{build_name}/refine/tree.nwk",
+        metadata = "results/{build_name}/filter/pre-filtered.tsv",
+        branch_lengths = "results/{build_name}/refine/branch_lengths.json",
+        muts = "results/{build_name}/refine/muts.json",
+        auspice_config = lambda w: config["dataset_config"][w.build_name]["dataset_files"] + '/auspice_config.json'
+    output:
+        auspice_json = "results/{build_name}/refine/{build_name}.json"
+    resources:
+        threads = config["resources"]["default"]["threads"],
+        mem_mb = config["resources"]["default"]["mem_mb"]
+    shell:
+        """
+        augur export v2 \
+            --tree {input.tree} \
+            --metadata {input.metadata} \
+            --node-data {input.branch_lengths} {input.muts} \
+            --auspice-config {input.auspice_config} \
+            --include-root-sequence-inline \
+            --output {output.auspice_json}
+        """
+
+rule assemble_dataset:
+    input:
+        reference = lambda w: config["dataset_config"][w.build_name]["dataset_files"] + '/reference.fasta',
+        sequences = lambda w: config["dataset_config"][w.build_name]["dataset_files"] + '/sequences.fasta',
+        change_log = lambda w: config["dataset_config"][w.build_name]["dataset_files"] + '/CHANGELOG.md',
+        pathogen = lambda w: config["dataset_config"][w.build_name]["dataset_files"] + '/pathogen.json',
+        readme = lambda w: config["dataset_config"][w.build_name]["dataset_files"] + '/README.md',
+        annotation = lambda w: config["dataset_config"][w.build_name]["dataset_files"] + '/genome_annotation.gff3',
+        tree = "results/{build_name}/refine/{build_name}.json"
+    output:
+        reference = 'datasets/{build_name}/reference.fasta',
+        sequences = 'datasets/{build_name}/sequences.fasta',
+        change_log = 'datasets/{build_name}/CHANGELOG.md',
+        pathogen = 'datasets/{build_name}/pathogen.json',
+        readme = 'datasets/{build_name}/README.md',
+        annotation = 'datasets/{build_name}/genome_annotation.gff3',
+        tree = 'datasets/{build_name}/tree.json'
+    shell:
+        """
+        mkdir -p datasets/{wildcards.build_name}
+        cp {input.reference} {output.reference}
+        cp {input.sequences} {output.sequences}
+        cp {input.change_log} {output.change_log}
+        cp {input.pathogen} {output.pathogen}
+        cp {input.readme} {output.readme}
+        cp {input.annotation} {output.annotation}
+        cp {input.tree} {output.tree}
+        """
+
+rule clean:
+    params:
+        "results"
+    shell:
+        "rm -rf {params}"
