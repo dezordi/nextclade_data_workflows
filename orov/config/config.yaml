@@ -11,12 +11,12 @@ output_dirs:
     - "results/{build_name}/refine"
 
 dataset_config:
-  orov/L/tefe:
+  L/tefe:
     dataset_files: "resources/L/tefe"
     min_length: 5110
     max_length: 6814
     gene: "RNA_polymerase"
-  orov/L/refseq:
+  L/refseq:
     dataset_files: "resources/L/refseq"
     min_length: 5134
     max_length: 6846
