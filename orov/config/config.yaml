@@ -15,12 +15,32 @@ dataset_config:
     dataset_files: "resources/L/tefe"
     min_length: 5110
     max_length: 6814
-    gene: "L"
+    genes: ["L"]
   L/refseq:
     dataset_files: "resources/L/refseq"
     min_length: 5134
     max_length: 6846
-    gene: "L"
+    genes: ["L"]
+  M/tefe:
+    dataset_files: "resources/M/tefe"
+    min_length: 3509
+    max_length: 4387
+    genes: ["M"]
+  M/refseq:
+    dataset_files: "resources/M/refseq"
+    min_length: 3508
+    max_length: 4385
+    genes: ["M"]
+  S/tefe:
+    dataset_files: "resources/S/tefe"
+    min_length: 755
+    max_length: 944
+    genes: ["N","NSs"]
+  S/refseq:
+    dataset_files: "resources/S/refseq"
+    min_length: 603
+    max_length: 754
+    genes: ["N","NSs"]
 
 resources:
   default:

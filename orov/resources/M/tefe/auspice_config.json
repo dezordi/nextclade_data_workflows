@@ -1,0 +1,39 @@
+{
+  "title": "Oropouche M segment tefe",
+  "maintainers": [
+    {
+      "name": "Filipe Dezordi",
+      "url": "https://dezordi.github.io/"
+    }
+  ],
+  "data_provenance": [
+    {
+      "name": "NCBI Virus",
+      "url": "https://www.ncbi.nlm.nih.gov/labs/virus/vssi/#/"
+    }
+  ],
+  "build_url": "",
+  "colorings": [
+    {
+      "key": "country",
+      "title": "Country",
+      "type": "categorical"
+    }
+  ],
+  "geo_resolutions": [
+    "country"
+  ],
+  "display_defaults": {
+    "map_triplicate": true
+  },
+  "filters": [
+    "genotype",
+    "country"
+  ],
+  "panels": [
+    "tree",
+    "map",
+    "entropy",
+    "frequencies"
+  ]
+}

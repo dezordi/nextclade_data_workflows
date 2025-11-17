@@ -1,4 +1,4 @@
-# Nextclade Dataset for "zikaV" Based on Reference "Natal RGN"
+# Nextclade Dataset for "oroV" L segment based on RefSeq reference genome
 
 ## Dataset Attributes
 
@@ -10,9 +10,9 @@
 
 ## Scope of This Dataset
 
-The dataset aims to enable rapid and accurate identification of the two main Zika virus genotypes, improving the resolution and speed of phylogenetic classification in routine surveillance networks.
+The dataset aims to enable the quality control of Oropouche virus using ncbi refseq as reference.
 
-The source code is available at [dezordi/nextclade_data_workflows/zikaV](https://github.com/dezordi/nextclade_data_workflows/tree/main/zikaV).
+The source code is available at [dezordi/nextclade_data_workflows/orov](https://github.com/dezordi/nextclade_data_workflows/tree/main/orov).
 
 For bugs, please open an [issue](https://github.com/dezordi/nextclade_data_workflows/issues)
 

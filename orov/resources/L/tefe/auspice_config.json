@@ -15,31 +15,13 @@
   "build_url": "",
   "colorings": [
     {
-      "key": "region",
-      "title": "Region",
-      "type": "categorical"
-    },
-    {
       "key": "country",
       "title": "Country",
-      "type": "categorical"
-    },
-    {
-      "key": "division",
-      "title": "Division",
-      "type": "categorical"
-    },
-    {
-      "key": "location",
-      "title": "Location",
       "type": "categorical"
     }
   ],
   "geo_resolutions": [
-    "region",
-    "country",
-    "division",
-    "location"
+    "country"
   ],
   "display_defaults": {
     "map_triplicate": true

@@ -154,11 +154,8 @@ rule ancestral:
         node_data = "results/{build_name}/refine/muts.json",
     params:
         inference = "joint",
-        translations = lambda w: "results/{0}/align/translations/{1}.fasta".format(
-            w.build_name, 
-            config["dataset_config"][w.build_name]["gene"]
-        ),
-        gene = lambda w: config["dataset_config"][w.build_name]["gene"]
+        translations= "results/{build_name}/align/translations/%GENE.fasta",
+        genes = lambda w: " ".join(config["dataset_config"][w.build_name]["genes"])
     resources:
         threads = config["resources"]["default"]["threads"],
         mem_mb = config["resources"]["default"]["mem_mb"]
@@ -169,9 +166,9 @@ rule ancestral:
             --alignment {input.alignment} \
             --inference {params.inference} \
             --infer-ambiguous \
-            --genes {params.gene} \
+            --genes {params.genes} \
             --annotation {input.annotation} \
-            --translations {params.translations} \
+            --translations {params.translations:q} \
             --root-sequence {input.reference} \
             --output-node-data {output.node_data}
         """

@@ -2,7 +2,7 @@
   "attributes": {
     "name": "orov/L/tefe",
     "reference accession": "PP154172.1",
-    "reference name": "Oropouche virus ILMD_TF29 (tefe)"
+    "reference name": "Oropouche virus ILMD_TF29 (tefe), L segment"
   },
   "compatibility": {
     "cli": "3.0.0-alpha.0",
@@ -40,11 +40,11 @@
     },
     "missingData": {
       "enabled": true,
-      "missingDataThreshold": 1197,
+      "missingDataThreshold": 1362,
       "scoreBias": 55
     },
     "mixedSites": {
-      "enabled": false,
+      "enabled": true,
       "mixedSitesThreshold": 7
     },
     "privateMutations": {
