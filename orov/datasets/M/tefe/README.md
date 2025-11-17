@@ -10,7 +10,7 @@
 
 ## Scope of This Dataset
 
-The dataset aims to enable the quality control of Oropouche virus using a genome from Tefe outbreak [REF] (ILMD_TF29) as reference.
+The dataset aims to enable the quality control of Oropouche virus using a genome from Tefe outbreak [REF](https://pubmed.ncbi.nlm.nih.gov/29623245/) (ILMD_TF29) as reference.
 
 The source code is available at [dezordi/nextclade_data_workflows/orov](https://github.com/dezordi/nextclade_data_workflows/tree/main/orov).
 
